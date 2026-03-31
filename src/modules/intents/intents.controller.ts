@@ -1,9 +1,13 @@
 import { Body, Controller, Get, Post, Put, Query } from '@nestjs/common';
 import { IntentsService } from './intents.service';
+import { JobsService } from '../jobs/jobs.service';
 
 @Controller()
 export class IntentsController {
-  constructor(private readonly intentsService: IntentsService) {}
+  constructor(
+    private readonly intentsService: IntentsService,
+    private readonly jobsService: JobsService,
+  ) {}
 
   @Get('jobs-list')
   getJobsList(@Query('jobId') jobId?: string) {
@@ -25,7 +29,7 @@ export class IntentsController {
     @Query('jobId') jobId: string | undefined,
     @Body() body: Record<string, unknown>,
   ) {
-    return this.intentsService.triggerIntentUpdate(jobId, body);
+    return this.jobsService.triggerIntentAnalysis({ ...body, jobId });
   }
 
   @Get('intent-clusters')

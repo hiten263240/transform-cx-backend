@@ -1,9 +1,13 @@
 import { Body, Controller, Delete, Get, Post, Put, Query } from '@nestjs/common';
 import { JobsService } from './jobs.service';
+import { AuditLogsService } from '../audit-logs/audit-logs.service';
 
 @Controller()
 export class JobsController {
-  constructor(private readonly jobsService: JobsService) {}
+  constructor(
+    private readonly jobsService: JobsService,
+    private readonly auditLogsService: AuditLogsService,
+  ) {}
 
   @Get('job-list')
   getJobList() {
@@ -27,7 +31,17 @@ export class JobsController {
 
   @Put('job')
   updateJob(@Body() body: Record<string, unknown>) {
-    return this.jobsService.updateJob(body);
+    return this.jobsService.updateJobData(body);
+  }
+
+  @Post('job/logs')
+  addLogsToJob(@Body() body: Record<string, unknown>) {
+    return this.auditLogsService.addLogsToJob(body);
+  }
+
+  @Get('job/logs')
+  getLogsByJobId(@Query('jobId') jobId?: string) {
+    return this.auditLogsService.getLogsByJobId(jobId);
   }
 
   @Post('intent-analysis')
